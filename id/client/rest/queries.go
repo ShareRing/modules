@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"bitbucket.org/sharering/shareledger-modules/id/types"
+	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
 	"github.com/gorilla/mux"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
