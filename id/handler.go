@@ -23,12 +23,35 @@ func NewHandler(keeper k.Keeper) sdk.Handler {
 			// case MsgRevokeIDSigners:
 			// return handleMsgRevokeIdSigners(ctx, keeper, msg)
 		default:
+			fmt.Printf("Unrecognized Id Msg type: %v", msg.Type())
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, fmt.Sprintf("Unrecognized identity Msg type: %v", msg.Type()))
 		}
 	}
 }
 
 func handleMsgCreateId(ctx sdk.Context, keeper k.Keeper, msg types.MsgCreateId) (*sdk.Result, error) {
+	id := msg.ToID()
+	keeper.SetID(ctx, id)
 
-	return &sdk.Result{}, nil
+	event := sdk.NewEvent(
+		types.EventCreateID,
+		sdk.NewAttribute(types.EventAttrIssuer, msg.IssuerAddr.String()),
+		sdk.NewAttribute(types.EventAttrOwner, msg.OwnerAddr.String()),
+		sdk.NewAttribute(types.EventAttrId, msg.Id),
+		sdk.NewAttribute(types.EventAttrOwner, msg.OwnerAddr.String()),
+	)
+	ctx.EventManager().EmitEvent(event)
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.IssuerAddr.String()),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.EventCreateID),
+		),
+	)
+	return &sdk.Result{
+		Log:    msg.String(),
+		Events: ctx.EventManager().Events(),
+	}, nil
 }

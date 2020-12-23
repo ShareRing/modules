@@ -10,6 +10,5 @@ import (
 
 // RegisterRoutes - Central function to define routes that get registered by the main application
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeKey string) {
-	// r.HandleFunc("/bank/accounts/{address}/transfers", SendRequestHandlerFn(cliCtx)).Methods("POST")
-	r.HandleFunc(fmt.Sprintf("/%s/info/{address}", storeKey), QueryIdByAddressRequestHandlerFn(cliCtx)).Methods("GET")
+	r.HandleFunc(fmt.Sprintf("/%s/info/{path}/{address}", storeKey), QueryIdInfoRequestHandlerFn(cliCtx)).Methods("GET")
 }

@@ -1,6 +1,8 @@
 package types
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -13,8 +15,8 @@ type BaseID struct {
 }
 
 type ID struct {
-	Id string `json:"id"`
-	BaseID
+	Id     string `json:"id"`
+	BaseID `json:"data"`
 }
 
 func NewBaseID(issuerAddr, backupAddr, ownerAddr sdk.AccAddress, extraData string) BaseID {
@@ -41,10 +43,14 @@ func MustUnmarshalBaseID(cdc *codec.Codec, value []byte) BaseID {
 	return id
 }
 
-func (id ID) ToStorage() BaseID {
+func (bId BaseID) String() string {
+	return fmt.Sprintf("{IssuerAddr:%s,OwnerAddr:%s,BackupAddr:%s,ExtraData:%s}", bId.IssuerAddr, bId.OwnerAddr.String(), bId.BackupAddr.String(), bId.ExtraData)
+}
+
+func (id ID) ToBaseID() BaseID {
 	return NewBaseID(id.IssuerAddr, id.BackupAddr, id.OwnerAddr, id.ExtraData)
 }
 
-func NewIDFromStorage(id string, ids BaseID) ID {
+func NewIDFromBaseID(id string, ids BaseID) ID {
 	return ID{id, ids}
 }

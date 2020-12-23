@@ -21,14 +21,32 @@ func NewQuerier(k Keeper) sdk.Querier {
 	}
 }
 
+// Get Id by address or id
 func queryIdInfo(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
-	var params types.QueryIdByAddressParams
+	id := &types.ID{}
 
-	if err := types.ModuleCdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	if path[0] == types.QueryPathAddress {
+		// Get id by owner's address
+		var params types.QueryIdByAddressParams
+		err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
+
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+
+		id = k.GetIdByAddress(ctx, params.Address)
+	} else if path[0] == types.QueryPathId {
+		// Get id by id
+		var params types.QueryIdByIdParams
+		err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
+		if err != nil {
+			return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+		}
+
+		id = k.GetIDByIdString(ctx, params.Id)
 	}
 
-	id := k.GetIdByAddress(ctx, params.Address)
+	// Return empty id if the id does not exist
 	if id == nil {
 		id = &types.ID{}
 	}

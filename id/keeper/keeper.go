@@ -33,13 +33,13 @@ func (k Keeper) GetIdByAddress(ctx sdk.Context, ownerAddr sdk.AccAddress) *types
 	}
 
 	ids := k.GetBaseID(ctx, id)
-	rs := types.NewIDFromStorage(string(id), ids)
+	rs := types.NewIDFromBaseID(string(id), ids)
 	return &rs
 }
 
 func (k Keeper) GetIDByIdString(ctx sdk.Context, id string) *types.ID {
 	ids := k.GetBaseID(ctx, []byte(id))
-	rs := types.NewIDFromStorage(id, ids)
+	rs := types.NewIDFromBaseID(id, ids)
 	return &rs
 }
 
@@ -48,11 +48,12 @@ func (k Keeper) GetBaseID(ctx sdk.Context, id []byte) types.BaseID {
 	bz := store.Get(id)
 
 	if len(bz) == 0 {
-		// TODO
+		// TODO return nil or emtpy
+		return types.BaseID{}
 	}
 
-	ids := types.MustUnmarshalBaseID(k.cdc, bz)
-	return ids
+	bId := types.MustUnmarshalBaseID(k.cdc, bz)
+	return bId
 }
 
 func (k Keeper) SetID(ctx sdk.Context, id types.ID) {
@@ -62,5 +63,5 @@ func (k Keeper) SetID(ctx sdk.Context, id types.ID) {
 	store.Set(id.OwnerAddr, []byte(id.Id))
 
 	// id -> {ID}
-	store.Set([]byte(id.Id), types.MustMarshalBaseID(k.cdc, id.ToStorage()))
+	store.Set([]byte(id.Id), types.MustMarshalBaseID(k.cdc, id.ToBaseID()))
 }

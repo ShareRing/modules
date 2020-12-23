@@ -9,3 +9,5 @@ require (
 	github.com/spf13/cobra v0.0.6
 	github.com/tendermint/tendermint v0.33.3
 )
+
+replace bitbucket.org/shareringvietnam/shareledger-modules => /home/phu/code/shareledger-modules

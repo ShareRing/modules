@@ -14,7 +14,14 @@ type QueryIdByAddressParams struct {
 	Address sdk.AccAddress
 }
 
-// NewQueryIdByAddressParams creates a new instance of QueryBalanceParams.
 func NewQueryIdByAddressParams(ownerAddr sdk.AccAddress) QueryIdByAddressParams {
 	return QueryIdByAddressParams{Address: ownerAddr}
+}
+
+type QueryIdByIdParams struct {
+	Id string
+}
+
+func NewQueryIdByIdParams(id string) QueryIdByIdParams {
+	return QueryIdByIdParams{Id: id}
 }

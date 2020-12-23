@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -35,32 +36,60 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 
 func GetIdByAddressCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "id [address]",
-		Short: "Query for id by owner address",
-		Long:  strings.TrimSpace(fmt.Sprintf(`Query id information of an account by owner address.Example:$ %s query %s id [address]`, version.Name, types.ModuleName)),
-		Args:  cobra.ExactArgs(1),
+		Use:   "info <address>|<id> [address,[id]]",
+		Short: "Query for id information",
+		Long: strings.TrimSpace(fmt.Sprintf(`
+Query id information of an account by owner address or the id.
+Example:
+$ %s query %s info address shareledger1s432u6zv95wpluxhf4qru2ewy58kc3w4tkzm3v
+$ %s query %s info id 123e4567-e89b-12d3-a456-426655440000`, version.Name, types.ModuleName, version.Name, types.ModuleName)),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			var bz []byte
+			var err error
+			if args[0] == types.QueryPathAddress {
+				bz, err = createGetIdByAddress(&cliCtx, args[1])
+			} else if args[0] == types.QueryPathId {
+				bz, err = createGetIdById(&cliCtx, args[1])
+			} else {
+				return errors.New("unknow command: " + args[0])
+			}
 
-			addr, err := sdk.ValAddressFromBech32(args[0])
 			if err != nil {
 				return err
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/%s", queryRoute, "info"), nil)
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/info/%s", queryRoute, args[0]), bz)
 			if err != nil {
 				return err
 			}
 
 			if len(res) == 0 {
-				return fmt.Errorf("no id found with address %s", addr)
+				return fmt.Errorf("id not found")
 			}
 
-			var out types.MsgCreateId
+			var out types.ID
 			cdc.MustUnmarshalJSON(res, &out)
 
 			return cliCtx.PrintOutput(out)
 		},
 	}
 	return cmd
+}
+
+func createGetIdByAddress(cliCtx *context.CLIContext, bench32Addr string) ([]byte, error) {
+	addr, addrErr := sdk.AccAddressFromBech32(bench32Addr)
+	if addrErr != nil {
+		return nil, addrErr
+	}
+	params := types.QueryIdByAddressParams{Address: addr}
+	bz, err := cliCtx.Codec.MarshalJSON(params)
+	return bz, err
+}
+
+func createGetIdById(cliCtx *context.CLIContext, id string) ([]byte, error) {
+	params := types.QueryIdByIdParams{Id: id}
+	bz, err := cliCtx.Codec.MarshalJSON(params)
+	return bz, err
 }
