@@ -54,3 +54,19 @@ func (id ID) ToBaseID() BaseID {
 func NewIDFromBaseID(id string, ids BaseID) ID {
 	return ID{id, ids}
 }
+
+func NewID(id string, issuerAddr, backupAddr, ownerAddr sdk.AccAddress, extraData string) ID {
+	return ID{id, BaseID{issuerAddr, backupAddr, ownerAddr, extraData}}
+}
+
+func (id *ID) IsEmpty() bool {
+	if id == nil {
+		return true
+	}
+
+	if len(id.IssuerAddr) == 0 {
+		return true
+	}
+
+	return false
+}

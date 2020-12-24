@@ -23,12 +23,18 @@ const (
 
 // ID message types
 const (
-	TypeMsgCreateID = "create_id"
+	TypeMsgCreateID       = "create_id"
+	TypeMsgCreateIDBatch  = "create_id_batch"
+	TypeMsgUpdateID       = "update_id"
+	TypeMsgReplaceIdOwner = "replace_id_owner"
 )
 
 // ID events
 const (
-	EventCreateID = "create_id"
+	EventCreateID       = "create_id"
+	EventCreateIDBatch  = "create_id_batch"
+	EventUpdateID       = "update_id"
+	EventReplaceIDOwner = "replce_id_owner"
 )
 
 const (

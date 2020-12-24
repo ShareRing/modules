@@ -56,7 +56,7 @@ func (k Keeper) GetBaseID(ctx sdk.Context, id []byte) types.BaseID {
 	return bId
 }
 
-func (k Keeper) SetID(ctx sdk.Context, id types.ID) {
+func (k Keeper) SetID(ctx sdk.Context, id *types.ID) {
 	store := ctx.KVStore(k.storeKey)
 
 	// address -> id

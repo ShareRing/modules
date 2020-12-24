@@ -22,3 +22,8 @@ var (
 	ModuleCdc     = types.ModuleCdc
 	RegisterCodec = types.RegisterCodec
 )
+
+var (
+	ErrIdNotExisted = types.ErrIdNotExisted
+	ErrIdExisted    = types.ErrIdExisted
+)
