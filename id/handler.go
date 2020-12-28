@@ -34,9 +34,8 @@ func NewHandler(keeper k.Keeper) sdk.Handler {
 func handleMsgCreateId(ctx sdk.Context, keeper k.Keeper, msg types.MsgCreateId) (*sdk.Result, error) {
 	id := msg.ToID()
 
-	checkId := keeper.GetIDByIdString(ctx, msg.Id)
-
-	if !checkId.IsEmpty() {
+	// Check existing
+	if keeper.IsExist(ctx, &id) {
 		return nil, ErrIdExisted
 	}
 
@@ -65,10 +64,12 @@ func handleMsgCreateId(ctx sdk.Context, keeper k.Keeper, msg types.MsgCreateId) 
 }
 
 func handleMsgCreateIdBatch(ctx sdk.Context, keeper k.Keeper, msg types.MsgCreateIdBatch) (*sdk.Result, error) {
-	// TODO: Check id existing
-
 	for i := 0; i < len(msg.Id); i++ {
-		id := types.NewID(msg.Id[i], msg.IssuerAddr, msg.OwnerAddr[i], msg.BackupAddr[i], msg.ExtraData[i])
+		id := types.NewID(msg.Id[i], msg.IssuerAddr, msg.BackupAddr[i], msg.OwnerAddr[i], msg.ExtraData[i])
+		// Check id existing
+		if keeper.IsExist(ctx, &id) {
+			return nil, ErrIdExisted
+		}
 
 		keeper.SetID(ctx, &id)
 		event := sdk.NewEvent(
@@ -106,12 +107,11 @@ func handleMsgUpdateId(ctx sdk.Context, keeper k.Keeper, msg types.MsgUpdateId) 
 	id.ExtraData = msg.ExtraData
 	keeper.SetID(ctx, id)
 
-	event := sdk.NewEvent(
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventUpdateID,
 		sdk.NewAttribute(types.EventAttrIssuer, msg.IssuerAddr.String()),
 		sdk.NewAttribute(types.EventAttrId, msg.Id),
-	)
-	ctx.EventManager().EmitEvent(event)
+	))
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -131,22 +131,26 @@ func handleMsgUpdateId(ctx sdk.Context, keeper k.Keeper, msg types.MsgUpdateId) 
 func handleMsgReplaceOwnerId(ctx sdk.Context, keeper k.Keeper, msg types.MsgReplaceIdOwner) (*sdk.Result, error) {
 	id := keeper.GetIDByIdString(ctx, msg.Id)
 
+	// Check if the id is existed or not
 	if id.IsEmpty() {
 		return nil, ErrIdNotExisted
 	}
 
-	// TODO: Validate new address, owner
+	// Check if the new owner has id or not
+	idOfNewOwner := keeper.GetIdOnlyByAddress(ctx, msg.OwnerAddr)
+	if len(idOfNewOwner) > 0 {
+		return nil, ErrIdExisted
+	}
 
 	// Update owner
 	id.OwnerAddr = msg.OwnerAddr
 	keeper.SetID(ctx, id)
 
-	event := sdk.NewEvent(
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.EventReplaceIDOwner,
 		sdk.NewAttribute(types.EventAttrOwner, msg.OwnerAddr.String()),
 		sdk.NewAttribute(types.EventAttrId, msg.Id),
-	)
-	ctx.EventManager().EmitEvent(event)
+	))
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
@@ -156,6 +160,7 @@ func handleMsgReplaceOwnerId(ctx sdk.Context, keeper k.Keeper, msg types.MsgRepl
 			sdk.NewAttribute(sdk.AttributeKeyAction, types.EventReplaceIDOwner),
 		),
 	)
+
 	return &sdk.Result{
 		Log:    msg.String(),
 		Events: ctx.EventManager().Events(),

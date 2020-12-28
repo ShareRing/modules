@@ -58,7 +58,9 @@ func NewIDFromBaseID(id string, ids BaseID) ID {
 func NewID(id string, issuerAddr, backupAddr, ownerAddr sdk.AccAddress, extraData string) ID {
 	return ID{id, BaseID{issuerAddr, backupAddr, ownerAddr, extraData}}
 }
-
+func (bId ID) String() string {
+	return fmt.Sprintf("{Id:%s,IssuerAddr:%s,OwnerAddr:%s,BackupAddr:%s,ExtraData:%s}", bId.Id, bId.IssuerAddr, bId.OwnerAddr.String(), bId.BackupAddr.String(), bId.ExtraData)
+}
 func (id *ID) IsEmpty() bool {
 	if id == nil {
 		return true
