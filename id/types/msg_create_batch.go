@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type MsgCreateIdBatch struct {
@@ -32,8 +33,40 @@ func (msg MsgCreateIdBatch) Type() string {
 	return TypeMsgCreateIDBatch
 }
 
-// Check len
 func (msg MsgCreateIdBatch) ValidateBasic() error {
+	if msg.IssuerAddr.Empty() {
+		return sdkerrors.ErrInvalidAddress
+	}
+
+	// Check len
+	if len(msg.Id) == 0 || len(msg.BackupAddr) == 0 || len(msg.OwnerAddr) == 0 || len(msg.ExtraData) == 0 {
+		return InvalidData
+	}
+
+	maxLen := len(msg.Id)
+	if len(msg.BackupAddr) != maxLen || len(msg.OwnerAddr) != maxLen || len(msg.ExtraData) != maxLen {
+		return InvalidData
+	}
+
+	for i := 0; i < maxLen; i++ {
+		// Check len
+		if len(msg.Id[i]) > MAX_ID_LEN || len(msg.Id[i]) == 0 || len(msg.ExtraData[i]) > MAX_ID_LEN {
+			return InvalidData
+		}
+
+		// Check address
+		if msg.OwnerAddr[i].Empty() || msg.BackupAddr[i].Empty() {
+			return InvalidData
+		}
+
+		// Check duplicate
+		for j := i + 1; j < maxLen; j++ {
+			if msg.Id[j] == msg.Id[i] || msg.OwnerAddr[j].Equals(msg.OwnerAddr[i]) {
+				return InvalidData
+			}
+		}
+	}
+
 	return nil
 }
 

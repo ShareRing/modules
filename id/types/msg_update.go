@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type MsgUpdateId struct {
@@ -29,6 +30,12 @@ func (msg MsgUpdateId) Type() string {
 }
 
 func (msg MsgUpdateId) ValidateBasic() error {
+	if len(msg.Id) > MAX_ID_LEN || len(msg.Id) == 0 || len(msg.ExtraData) > MAX_ID_LEN {
+		return InvalidData
+	}
+	if msg.IssuerAddr.Empty() {
+		return sdkerrors.ErrInvalidAddress
+	}
 	return nil
 }
 

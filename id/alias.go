@@ -6,14 +6,19 @@ import (
 )
 
 type (
-	Keeper = keeper.Keeper
+	Keeper            = keeper.Keeper
+	MsgReplaceIdOwner = types.MsgReplaceIdOwner
 )
 
 const (
-	StoreKey     = types.StoreKey
-	ModuleName   = types.ModuleName
-	QuerierRoute = types.QuerierRoute
-	RouterKey    = types.RouterKey
+	StoreKey              = types.StoreKey
+	ModuleName            = types.ModuleName
+	QuerierRoute          = types.QuerierRoute
+	RouterKey             = types.RouterKey
+	TypeMsgCreateID       = types.TypeMsgCreateID
+	TypeMsgCreateIDBatch  = types.TypeMsgCreateIDBatch
+	TypeMsgReplaceIdOwner = types.TypeMsgReplaceIdOwner
+	TypeMsgUpdateID       = types.TypeMsgUpdateID
 )
 
 var (
@@ -24,6 +29,7 @@ var (
 )
 
 var (
-	ErrIdNotExisted = types.ErrIdNotExisted
-	ErrIdExisted    = types.ErrIdExisted
+	ErrIdNotExisted    = types.ErrIdNotExisted
+	ErrIdExisted       = types.ErrIdExisted
+	ErrWrongBackupAddr = types.ErrWrongBackupAddr
 )

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
@@ -75,7 +76,7 @@ $ %s query %s info id 123e4567-e89b-12d3-a456-426655440000`, version.Name, types
 			return cliCtx.PrintOutput(out)
 		},
 	}
-	return cmd
+	return flags.GetCommands(cmd)[0]
 }
 
 func createGetIdByAddress(cliCtx *context.CLIContext, bench32Addr string) ([]byte, error) {

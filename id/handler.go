@@ -142,6 +142,11 @@ func handleMsgReplaceOwnerId(ctx sdk.Context, keeper k.Keeper, msg types.MsgRepl
 		return nil, ErrIdExisted
 	}
 
+	// Check right backup
+	if !id.BackupAddr.Equals(msg.BackupAddr) {
+		return nil, ErrWrongBackupAddr
+	}
+
 	// Update owner
 	id.OwnerAddr = msg.OwnerAddr
 	keeper.SetID(ctx, id)

@@ -4,6 +4,11 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
+const (
+	MAX_ID_LEN = 64
 )
 
 type MsgCreateId struct {
@@ -32,9 +37,13 @@ func (msg MsgCreateId) Type() string {
 	return TypeMsgCreateID
 }
 
-// If sender is different with owner
-// sender must be registered as IDSigner
 func (msg MsgCreateId) ValidateBasic() error {
+	if len(msg.Id) > MAX_ID_LEN || len(msg.Id) == 0 || len(msg.ExtraData) > MAX_ID_LEN {
+		return InvalidData
+	}
+	if msg.BackupAddr.Empty() || msg.IssuerAddr.Empty() || msg.OwnerAddr.Empty() {
+		return sdkerrors.ErrInvalidAddress
+	}
 	return nil
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type MsgReplaceIdOwner struct {
@@ -29,7 +30,12 @@ func (msg MsgReplaceIdOwner) Type() string {
 }
 
 func (msg MsgReplaceIdOwner) ValidateBasic() error {
-	// TODO
+	if len(msg.Id) > MAX_ID_LEN || len(msg.Id) == 0 {
+		return InvalidData
+	}
+	if msg.BackupAddr.Empty() || msg.OwnerAddr.Empty() {
+		return sdkerrors.ErrInvalidAddress
+	}
 	return nil
 }
 
