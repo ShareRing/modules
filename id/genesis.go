@@ -1,12 +1,15 @@
 package id
 
 import (
+	"encoding/json"
+
+	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type GenesisState struct {
-	IDSigners []string
-	IDs       map[string]string
+	IDs []types.ID `json:"IDs" yaml:"IDs"`
 }
 
 func NewGenesisState() GenesisState {
@@ -22,33 +25,31 @@ func DefaultGenesisState() GenesisState {
 }
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) {
-	// for _, signerKey := range data.IDSigners {
-	// 	keeper.SetIdSignerStatus(ctx, signerKey, types.IdSignerActive)
-	// }
-	// for idKey, hash := range data.IDs {
-	// 	keeper.SetId(ctx, idKey, hash)
-	// }
+	for _, id := range data.IDs {
+		keeper.SetID(ctx, &id)
+	}
 }
 
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	// var idSignerKeys []string
-	// cb := func(idSignerKey string, s types.IdSigner) bool {
-	// 	if s.Status == types.IdSignerActive {
-	// 		idSignerKeys = append(idSignerKeys, idSignerKey)
-	// 	}
-	// 	return false
-	// }
-	// k.IterateIdSigners(ctx, cb)
+	ids := []types.ID{}
 
-	// ids := make(map[string]string)
-	// cb2 := func(idKey, hash string) bool {
-	// 	ids[idKey] = hash
-	// 	return false
-	// }
-	// k.IterateIds(ctx, cb2)
+	cb := func(id types.ID) (stop bool) {
+		ids = append(ids, id)
+		return false
+	}
+
+	k.IterateID(ctx, cb)
 
 	return GenesisState{
-		// IDSigners: idSignerKeys,
-		// IDs:       ids,
+		IDs: ids,
 	}
+}
+
+func GetGenesisStateFromAppState(cdc *codec.Codec, appState map[string]json.RawMessage) GenesisState {
+	var genesisState GenesisState
+	if appState[ModuleName] != nil {
+		cdc.MustUnmarshalJSON(appState[ModuleName], &genesisState)
+	}
+
+	return genesisState
 }

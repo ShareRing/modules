@@ -1,5 +1,7 @@
 package types
 
+import sdk "github.com/cosmos/cosmos-sdk/types"
+
 const (
 	// ModuleName defines the module name
 	ModuleName = "id"
@@ -42,3 +44,15 @@ const (
 	EventAttrId     = "id"
 	EventAttrOwner  = "owner"
 )
+
+var (
+	IdAddressStatePrefix = []byte{0x1}
+	IdStatePrefix        = []byte{0x2}
+)
+
+func IdAddressStateStoreKey(addr sdk.AccAddress) []byte {
+	return append(IdAddressStatePrefix, addr.Bytes()...)
+}
+func IdStateStoreKey(id string) []byte {
+	return append(IdStatePrefix, []byte(id)...)
+}

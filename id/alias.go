@@ -8,6 +8,8 @@ import (
 type (
 	Keeper            = keeper.Keeper
 	MsgReplaceIdOwner = types.MsgReplaceIdOwner
+	ID                = types.ID
+	BaseID            = types.BaseID
 )
 
 const (
