@@ -33,7 +33,7 @@ func (msg MsgCreateDoc) GetSignBytes() []byte {
 }
 
 func (msg MsgCreateDoc) String() string {
-	return fmt.Sprintf("doc/MsgCreateDoc{Holder:%s,Issuer:%s,Proof:%s,Data:%s}", msg.Holder, msg.Issuer.String(), msg.Proof, msg.Data)
+	return fmt.Sprintf("%s/%s{Holder:%s,Issuer:%s,Proof:%s,Data:%s}", ModuleName, TypeMsgCreateDoc, msg.Holder, msg.Issuer.String(), msg.Proof, msg.Data)
 }
 
 func (msg MsgCreateDoc) GetSigners() []sdk.AccAddress {

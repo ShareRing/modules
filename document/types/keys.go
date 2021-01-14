@@ -27,14 +27,18 @@ const (
 )
 const (
 	EventTypeCreateDoc = "create_doc"
+	EventTypeUpdateDoc = "update_doc"
+	EventTypeRevokeDoc = "revoke_doc"
 
-	EventAttrHolder = "hodler"
+	EventAttrHolder = "holder"
 	EventAttrProof  = "proof"
 	EventAttrIssuer = "issuer"
+	EventAttrData   = "data"
 )
 
 var (
 	StateKeySep     = []byte("|")
 	DocDetailPrefix = []byte{0x1}
 	DocBasicPrefix  = []byte{0x2}
+	DocRevokeFlag   = 1 << 16
 )

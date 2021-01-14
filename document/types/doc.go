@@ -12,12 +12,12 @@ type Doc struct {
 	Issuer  sdk.AccAddress
 	Proof   []byte
 	Data    []byte
-	Version int16
+	Version uint16
 }
 
 type DocDetailState struct {
 	Data    []byte
-	Version int16
+	Version uint16
 }
 
 type DocBasicState struct {
@@ -30,13 +30,20 @@ func (d Doc) GetDetailState() DocDetailState {
 	return ds
 }
 
-// 0x2|<hodler>|<proof>|<issuer>
+// 0x1|<hodler>|<proof>|<issuer>
 func (d Doc) GetKeyDetailState() []byte {
 	key := []byte{}
-	key = append(StateKeySep, d.Holder...)
-	key = append(StateKeySep, d.Proof...)
-	key = append(StateKeySep, d.Issuer...)
+	key = append(key, StateKeySep...)
+	key = append(key, d.Holder...)
+
+	key = append(key, StateKeySep...)
+	key = append(key, d.Proof...)
+
+	key = append(key, StateKeySep...)
+	key = append(key, d.Issuer...)
+
 	key = append(DocDetailPrefix, key...)
+
 	return key
 }
 

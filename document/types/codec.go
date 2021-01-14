@@ -1,6 +1,8 @@
 package types
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
@@ -13,8 +15,8 @@ func init() {
 
 // RegisterCodec registers concrete types on the Amino codec
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgCreateDoc{}, "id/MsgCreateDoc", nil)
-	cdc.RegisterConcrete(MsgCreateDocBatch{}, "id/MsgCreateDocBatch", nil)
-	cdc.RegisterConcrete(MsgUpdateDoc{}, "id/MsgUpdateDoc", nil)
-	cdc.RegisterConcrete(MsgRevokeDoc{}, "id/MsgRevokeDoc", nil)
+	cdc.RegisterConcrete(MsgCreateDoc{}, fmt.Sprintf("%s/%s", ModuleName, TypeMsgCreateDoc), nil)
+	cdc.RegisterConcrete(MsgCreateDocBatch{}, fmt.Sprintf("%s/%s", ModuleName, TypeMsgCreateDocInBatch), nil)
+	cdc.RegisterConcrete(MsgUpdateDoc{}, fmt.Sprintf("%s/%s", ModuleName, TypeMsgUpdateDoc), nil)
+	cdc.RegisterConcrete(MsgRevokeDoc{}, fmt.Sprintf("%s/%s", ModuleName, TypeMsgRevokeDoc), nil)
 }
