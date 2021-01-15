@@ -8,20 +8,20 @@ import (
 )
 
 type Doc struct {
-	Holder  ID
-	Issuer  sdk.AccAddress
-	Proof   []byte
-	Data    []byte
-	Version uint16
+	Holder  string         `json:"holder"`
+	Issuer  sdk.AccAddress `json:"issuer"`
+	Proof   string         `json:"proof"`
+	Data    string         `json:"data"`
+	Version uint16         `json:"version"`
 }
 
 type DocDetailState struct {
-	Data    []byte
+	Data    string
 	Version uint16
 }
 
 type DocBasicState struct {
-	Holder ID
+	Holder string
 	Issuer sdk.AccAddress
 }
 
@@ -71,7 +71,9 @@ func (d Doc) GetBasicState() DocBasicState {
 // 0x2|<proof>
 func (d Doc) GetKeyBasicState() []byte {
 	key := []byte{}
-	key = append(StateKeySep, d.Proof...)
+	key = append(key, StateKeySep...)
+	key = append(key, d.Proof...)
+
 	key = append(DocBasicPrefix, key...)
 	return key
 }

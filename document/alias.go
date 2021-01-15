@@ -34,3 +34,7 @@ var (
 	ErrDocExisted     = types.ErrDocExisted
 	ErrDocInvalidData = types.ErrDocInvalidData
 )
+
+var (
+	DocRevokeFlag = types.DocRevokeFlag
+)

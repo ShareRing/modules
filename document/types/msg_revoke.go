@@ -7,9 +7,13 @@ import (
 )
 
 type MsgRevokeDoc struct {
-	Holder ID
 	Issuer sdk.AccAddress
-	Proof  []byte
+	Holder string
+	Proof  string
+}
+
+func NewMsgRevokeDoc(issuer sdk.AccAddress, holder, proof string) MsgRevokeDoc {
+	return MsgRevokeDoc{Issuer: issuer, Holder: holder, Proof: proof}
 }
 
 func (msg MsgRevokeDoc) Route() string {

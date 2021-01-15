@@ -7,9 +7,9 @@ const (
 
 // QueryIdByAddressParams defines the params for querying an account id information.
 type QueryDocByProofParams struct {
-	Proof []byte
+	Proof string
 }
 
-func NewQueryDocByProofParams(proof []byte) QueryDocByProofParams {
+func NewQueryDocByProofParams(proof string) QueryDocByProofParams {
 	return QueryDocByProofParams{Proof: proof}
 }

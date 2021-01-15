@@ -35,18 +35,18 @@ func GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 
 func GetDocByProofCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "by-proof <proof>",
+		Use:   "proof <proof>",
 		Short: "Query for doc information",
 		Long: strings.TrimSpace(fmt.Sprintf(`
 Query document information by the proof.
 Example:
-$ %s query %s by-proof 5wpluxhf4qru2ewy58kc3w4tkzm3v`, version.Name, types.ModuleName)),
-		Args: cobra.ExactArgs(2),
+$ %s query %s proof 5wpluxhf4qru2ewy58kc3w4tkzm3v`, version.Name, types.ModuleName)),
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			var bz []byte
 			var err error
-			bz, err = createDocByAddressParams(&cliCtx, args[1])
+			bz, err = createDocByAddressParams(&cliCtx, args[0])
 
 			if err != nil {
 				return err
@@ -58,10 +58,10 @@ $ %s query %s by-proof 5wpluxhf4qru2ewy58kc3w4tkzm3v`, version.Name, types.Modul
 			}
 
 			if len(res) == 0 {
-				return fmt.Errorf("id not found")
+				return fmt.Errorf("doc not found")
 			}
 
-			var out types.ID
+			var out types.Doc
 			cdc.MustUnmarshalJSON(res, &out)
 
 			return cliCtx.PrintOutput(out)
@@ -72,7 +72,7 @@ $ %s query %s by-proof 5wpluxhf4qru2ewy58kc3w4tkzm3v`, version.Name, types.Modul
 
 func createDocByAddressParams(cliCtx *context.CLIContext, proof string) ([]byte, error) {
 
-	params := types.QueryDocByProofParams{Proof: []byte(proof)}
+	params := types.QueryDocByProofParams{Proof: proof}
 	bz, err := cliCtx.Codec.MarshalJSON(params)
 	return bz, err
 }

@@ -7,10 +7,14 @@ import (
 )
 
 type MsgUpdateDoc struct {
-	Holder ID
+	Holder string
 	Issuer sdk.AccAddress
-	Proof  []byte
-	Data   []byte
+	Proof  string
+	Data   string
+}
+
+func NewMsgUpdateDoc(issuer sdk.AccAddress, holderId, proof, data string) MsgUpdateDoc {
+	return MsgUpdateDoc{Issuer: issuer, Holder: holderId, Proof: proof, Data: data}
 }
 
 func (msg MsgUpdateDoc) Route() string {

@@ -40,5 +40,5 @@ var (
 	StateKeySep     = []byte("|")
 	DocDetailPrefix = []byte{0x1}
 	DocBasicPrefix  = []byte{0x2}
-	DocRevokeFlag   = 1 << 16
+	DocRevokeFlag   = 0xffff
 )

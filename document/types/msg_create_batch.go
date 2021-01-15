@@ -8,9 +8,13 @@ import (
 
 type MsgCreateDocBatch struct {
 	Issuer sdk.AccAddress
-	Holder []ID
-	Proof  [][]byte
-	Data   [][]byte
+	Holder []string
+	Proof  []string
+	Data   []string
+}
+
+func NewMsgCreateDocBatch(issuer sdk.AccAddress, holderId, proof, data []string) MsgCreateDocBatch {
+	return MsgCreateDocBatch{Issuer: issuer, Holder: holderId, Proof: proof, Data: data}
 }
 
 func (msg MsgCreateDocBatch) Route() string {

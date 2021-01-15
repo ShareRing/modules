@@ -66,12 +66,11 @@ func handleMsgCreateDocInBatch(ctx sdk.Context, k Keeper, msg types.MsgCreateDoc
 	for i := 0; i < len(msg.Holder); i++ {
 		doc := types.Doc{Issuer: msg.Issuer, Holder: msg.Holder[i], Proof: msg.Proof[i], Data: msg.Data[i], Version: 0}
 
-		// TODO: Do we need check here??
 		// Check doc is existed
-		// existingDoc := k.GetDoc(ctx, doc)
-		// if len(existingDoc.Proof) > 0 {
-		// 	return nil, types.ErrDocExisted
-		// }
+		existingDoc := k.GetDoc(ctx, doc)
+		if len(existingDoc.Proof) > 0 {
+			return nil, types.ErrDocExisted
+		}
 
 		k.SetDoc(ctx, doc)
 
@@ -84,6 +83,7 @@ func handleMsgCreateDocInBatch(ctx sdk.Context, k Keeper, msg types.MsgCreateDoc
 			),
 		)
 	}
+
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,

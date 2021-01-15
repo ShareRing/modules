@@ -6,13 +6,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-type ID []byte
-
 type MsgCreateDoc struct {
-	Holder ID
+	Holder string
 	Issuer sdk.AccAddress
-	Proof  []byte
-	Data   []byte
+	Proof  string
+	Data   string
+}
+
+func NewMsgCreateDoc(issuer sdk.AccAddress, holderId, proof, data string) MsgCreateDoc {
+	return MsgCreateDoc{Issuer: issuer, Holder: holderId, Proof: proof, Data: data}
 }
 
 func (msg MsgCreateDoc) Route() string {
