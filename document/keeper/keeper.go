@@ -56,3 +56,19 @@ func (k Keeper) GetDoc(ctx sdk.Context, queryDoc types.Doc) types.Doc {
 	queryDoc.Data = ds.Data
 	return queryDoc
 }
+
+func (k Keeper) IterateAllDocsOfAHolder(ctx sdk.Context, holderId string, cb func(doc types.Doc) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	queryDoc := types.Doc{Holder: holderId}
+	it := sdk.KVStorePrefixIterator(store, queryDoc.GetKeyDetailOfHolder())
+
+	defer it.Close()
+	for ; it.Valid(); it.Next() {
+
+		doc := types.MustMarshalFromDetailRawState(k.cdc, it.Key(), it.Value())
+		if cb(doc) {
+			break
+		}
+	}
+}

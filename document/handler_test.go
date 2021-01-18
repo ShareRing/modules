@@ -184,3 +184,43 @@ func Test_MsgRevokeDocument_OK(t *testing.T) {
 	require.Equal(t, extraData, revokedDoc.Data)
 	require.Equal(t, uint16(types.DocRevokeFlag), revokedDoc.Version)
 }
+
+func Test_MsgRevokeDocument_DoesNotExist(t *testing.T) {
+	ctx, keeper := keep.CreateTestInput(t, false)
+	holder := ("id-123")
+
+	msgCreateDoc1 := types.MsgCreateDoc{Holder: holder, Issuer: issuerAddr, Proof: proof, Data: extraData}
+	res, err := handleMsgCreateDoc(ctx, keeper, msgCreateDoc1)
+
+	require.Nil(t, err)
+	require.NotNil(t, res)
+
+	require.Equal(t, types.EventTypeCreateDoc, res.Events[0].Type)
+
+	queryDoc := types.Doc{Proof: proof}
+	doc := keeper.GetDocByProof(ctx, queryDoc)
+
+	require.Equal(t, proof, doc.Proof)
+	require.Equal(t, issuerAddr, doc.Issuer)
+	require.Equal(t, holder, doc.Holder)
+	require.Equal(t, extraData, doc.Data)
+
+	msgRevokeDoc := types.MsgRevokeDoc{Issuer: issuerAddr, Proof: proof + "1", Holder: holder}
+
+	res2, err2 := handleMsgRevokeDoc(ctx, keeper, msgRevokeDoc)
+
+	require.Nil(t, res2)
+	require.Error(t, err2)
+	require.True(t, types.ErrDocNotExisted.Is(err2))
+
+	// TODO Check event more
+	// require.Equal(t, types.EventTypeRevokeDoc, res2.Events[0].Type)
+
+	revokedDoc := keeper.GetDocByProof(ctx, queryDoc)
+
+	require.Equal(t, proof, revokedDoc.Proof)
+	require.Equal(t, issuerAddr, revokedDoc.Issuer)
+	require.Equal(t, holder, revokedDoc.Holder)
+	require.Equal(t, extraData, revokedDoc.Data)
+	require.Equal(t, uint16(0x0), revokedDoc.Version)
+}

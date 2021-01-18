@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -33,14 +34,24 @@ func (d Doc) GetDetailState() DocDetailState {
 // 0x1|<hodler>|<proof>|<issuer>
 func (d Doc) GetKeyDetailState() []byte {
 	key := []byte{}
+	key = append(key, []byte(StateKeySep)...)
+	key = append(key, []byte(d.Holder)...)
+
+	key = append(key, []byte(StateKeySep)...)
+	key = append(key, []byte(d.Proof)...)
+
+	key = append(key, []byte(StateKeySep)...)
+	key = append(key, []byte(d.Issuer.String())...)
+
+	key = append(DocDetailPrefix, key...)
+
+	return key
+}
+
+func (d Doc) GetKeyDetailOfHolder() []byte {
+	key := []byte{}
 	key = append(key, StateKeySep...)
 	key = append(key, d.Holder...)
-
-	key = append(key, StateKeySep...)
-	key = append(key, d.Proof...)
-
-	key = append(key, StateKeySep...)
-	key = append(key, d.Issuer...)
 
 	key = append(DocDetailPrefix, key...)
 
@@ -71,8 +82,8 @@ func (d Doc) GetBasicState() DocBasicState {
 // 0x2|<proof>
 func (d Doc) GetKeyBasicState() []byte {
 	key := []byte{}
-	key = append(key, StateKeySep...)
-	key = append(key, d.Proof...)
+	key = append(key, []byte(StateKeySep)...)
+	key = append(key, []byte(d.Proof)...)
 
 	key = append(DocBasicPrefix, key...)
 	return key
@@ -97,4 +108,25 @@ func MustUnmarshalDocBasicState(cdc *codec.Codec, value []byte) DocBasicState {
 func (d Doc) String() string {
 	s := fmt.Sprintf("Hodler %v, issuer %v, Proof: %v, Data: %v, Ver: %d", d.Holder, d.Issuer, d.Proof, d.Data, d.Version)
 	return s
+}
+
+func MustMarshalFromDetailRawState(cdc *codec.Codec, key, value []byte) Doc {
+	sKey := string(key)
+	sKeyArr := strings.Split(sKey, StateKeySep)
+	doc := Doc{}
+
+	issuer, err := sdk.AccAddressFromBech32(sKeyArr[3])
+	if err != nil {
+		panic(err)
+	}
+
+	doc.Holder = sKeyArr[1]
+	doc.Proof = sKeyArr[2]
+	doc.Issuer = issuer
+
+	ds := MustUnmarshalDocDetailState(cdc, value)
+
+	doc.Data = ds.Data
+	doc.Version = ds.Version
+	return doc
 }

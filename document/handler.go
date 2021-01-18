@@ -103,7 +103,7 @@ func handleMsgUpdateDoc(ctx sdk.Context, k Keeper, msg types.MsgUpdateDoc) (*sdk
 	queryDoc := types.Doc{Issuer: msg.Issuer, Holder: msg.Holder, Proof: msg.Proof, Data: msg.Data, Version: 0}
 
 	// Check doc is existed
-	existingDoc := k.GetDoc(ctx, queryDoc)
+	existingDoc := k.GetDocByProof(ctx, queryDoc)
 	if len(existingDoc.Proof) == 0 {
 		return nil, types.ErrDocNotExisted
 	}
@@ -142,7 +142,7 @@ func handleMsgRevokeDoc(ctx sdk.Context, k Keeper, msg types.MsgRevokeDoc) (*sdk
 	queryDoc := types.Doc{Issuer: msg.Issuer, Holder: msg.Holder, Proof: msg.Proof}
 
 	// Check doc is existed
-	existingDoc := k.GetDoc(ctx, queryDoc)
+	existingDoc := k.GetDocByProof(ctx, queryDoc)
 	if len(existingDoc.Proof) == 0 {
 		return nil, types.ErrDocNotExisted
 	}

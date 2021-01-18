@@ -14,7 +14,8 @@ func NewQuerier(k Keeper) sdk.Querier {
 		switch path[0] {
 		case types.QueryByProof:
 			return queryDocByProof(ctx, req, k)
-
+		case types.QueryByHolder:
+			return queryAllDocsOfAHolder(ctx, req, k)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown query path: %s", path[0])
 		}
@@ -40,4 +41,33 @@ func queryDocByProof(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, 
 	}
 
 	return bz, nil
+}
+
+func queryAllDocsOfAHolder(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var params types.QueryDocByHolderParams
+
+	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+
+	// Return empty doc if the doc does not exist
+	docs := make([]types.Doc, 0)
+
+	cb := func(doc types.Doc) bool {
+		docs = append(docs, doc)
+		return false
+	}
+
+	k.IterateAllDocsOfAHolder(ctx, params.Holder, cb)
+
+	// docsType := types.Docs(docs)
+
+	bz, err := codec.MarshalJSONIndent(types.ModuleCdc, docs)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return bz, nil
+
 }

@@ -23,7 +23,8 @@ const (
 )
 
 const (
-	QueryByProof = "proof"
+	QueryByProof  = "proof"
+	QueryByHolder = "holder"
 )
 const (
 	EventTypeCreateDoc = "create_doc"
@@ -37,7 +38,7 @@ const (
 )
 
 var (
-	StateKeySep     = []byte("|")
+	StateKeySep     = "|"
 	DocDetailPrefix = []byte{0x1}
 	DocBasicPrefix  = []byte{0x2}
 	DocRevokeFlag   = 0xffff
