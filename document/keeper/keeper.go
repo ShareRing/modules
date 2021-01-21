@@ -72,3 +72,17 @@ func (k Keeper) IterateAllDocsOfAHolder(ctx sdk.Context, holderId string, cb fun
 		}
 	}
 }
+func (k Keeper) IterateDocs(ctx sdk.Context, cb func(doc types.Doc) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	it := sdk.KVStorePrefixIterator(store, types.DocDetailPrefix)
+
+	defer it.Close()
+	for ; it.Valid(); it.Next() {
+
+		doc := types.MustMarshalFromDetailRawState(k.cdc, it.Key(), it.Value())
+		if cb(doc) {
+			break
+		}
+	}
+}

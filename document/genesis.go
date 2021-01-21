@@ -1,12 +1,12 @@
 package document
 
 import (
+	"bitbucket.org/shareringvietnam/shareledger-modules/document/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type GenesisState struct {
-	IDSigners []string
-	IDs       map[string]string
+	Documents []types.Doc
 }
 
 func NewGenesisState() GenesisState {
@@ -22,34 +22,22 @@ func DefaultGenesisState() GenesisState {
 }
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) {
-	// for _, signerKey := range data.IDSigners {
-	// 	keeper.SetIdSignerStatus(ctx, signerKey, types.IdSignerActive)
-	// }
-	// for idKey, hash := range data.IDs {
-	// 	keeper.SetId(ctx, idKey, hash)
-	// }
+	for _, doc := range data.Documents {
+		keeper.SetDoc(ctx, doc)
+	}
 }
 
-// TODO
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	// var idSignerKeys []string
-	// cb := func(idSignerKey string, s types.IdSigner) bool {
-	// 	if s.Status == types.IdSignerActive {
-	// 		idSignerKeys = append(idSignerKeys, idSignerKey)
-	// 	}
-	// 	return false
-	// }
-	// k.IterateIdSigners(ctx, cb)
+	docs := []types.Doc{}
 
-	// ids := make(map[string]string)
-	// cb2 := func(idKey, hash string) bool {
-	// 	ids[idKey] = hash
-	// 	return false
-	// }
-	// k.IterateIds(ctx, cb2)
+	cb := func(doc types.Doc) (stop bool) {
+		docs = append(docs, doc)
+		return false
+	}
+
+	k.IterateDocs(ctx, cb)
 
 	return GenesisState{
-		// IDSigners: idSignerKeys,
-		// IDs:       ids,
+		Documents: docs,
 	}
 }
