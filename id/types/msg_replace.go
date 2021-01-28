@@ -8,8 +8,8 @@ import (
 )
 
 type MsgReplaceIdOwner struct {
-	Id         string         `json:"id"`
 	BackupAddr sdk.AccAddress `json:"backup_address"`
+	Id         string         `json:"id"`
 	OwnerAddr  sdk.AccAddress `json:"owner_address"`
 }
 
