@@ -7,10 +7,10 @@ import (
 )
 
 type MsgCreateDoc struct {
-	Holder string
-	Issuer sdk.AccAddress
-	Proof  string
-	Data   string
+	Data   string         `json:"data"`
+	Holder string         `json:"holder"`
+	Issuer sdk.AccAddress `json:"issuer"`
+	Proof  string         `json:"proof"`
 }
 
 func NewMsgCreateDoc(issuer sdk.AccAddress, holderId, proof, data string) MsgCreateDoc {

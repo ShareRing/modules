@@ -7,9 +7,9 @@ import (
 )
 
 type MsgRevokeDoc struct {
-	Issuer sdk.AccAddress
-	Holder string
-	Proof  string
+	Holder string         `json:"holder"`
+	Issuer sdk.AccAddress `json:"issuer"`
+	Proof  string         `json:"proof"`
 }
 
 func NewMsgRevokeDoc(issuer sdk.AccAddress, holder, proof string) MsgRevokeDoc {

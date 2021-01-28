@@ -7,10 +7,10 @@ import (
 )
 
 type MsgUpdateDoc struct {
-	Holder string
-	Issuer sdk.AccAddress
-	Proof  string
-	Data   string
+	Data   string         `json:"data"`
+	Holder string         `json:"holder"`
+	Issuer sdk.AccAddress `json:"issuer"`
+	Proof  string         `json:"proof"`
 }
 
 func NewMsgUpdateDoc(issuer sdk.AccAddress, holderId, proof, data string) MsgUpdateDoc {
@@ -22,7 +22,7 @@ func (msg MsgUpdateDoc) Route() string {
 }
 
 func (msg MsgUpdateDoc) Type() string {
-	return TypeMsgCreateDocInBatch
+	return TypeMsgUpdateDoc
 }
 
 func (msg MsgUpdateDoc) ValidateBasic() error {

@@ -80,6 +80,7 @@ func handleMsgCreateDocInBatch(ctx sdk.Context, k Keeper, msg types.MsgCreateDoc
 				sdk.NewAttribute(types.EventAttrIssuer, msg.Issuer.String()),
 				sdk.NewAttribute(types.EventAttrHolder, string(msg.Holder[i])),
 				sdk.NewAttribute(types.EventAttrProof, string(msg.Proof[i])),
+				sdk.NewAttribute(types.EventAttrData, string(msg.Data[i])),
 			),
 		)
 	}
@@ -117,9 +118,9 @@ func handleMsgUpdateDoc(ctx sdk.Context, k Keeper, msg types.MsgUpdateDoc) (*sdk
 		sdk.NewEvent(
 			types.EventTypeUpdateDoc,
 			sdk.NewAttribute(types.EventAttrIssuer, msg.Issuer.String()),
-			sdk.NewAttribute(types.EventAttrHolder, string(msg.Holder)),
-			sdk.NewAttribute(types.EventAttrProof, string(msg.Proof)),
-			sdk.NewAttribute(types.EventAttrData, string(msg.Data)),
+			sdk.NewAttribute(types.EventAttrHolder, msg.Holder),
+			sdk.NewAttribute(types.EventAttrProof, msg.Proof),
+			sdk.NewAttribute(types.EventAttrData, msg.Data),
 		),
 	)
 
@@ -133,7 +134,6 @@ func handleMsgUpdateDoc(ctx sdk.Context, k Keeper, msg types.MsgUpdateDoc) (*sdk
 	)
 
 	return &sdk.Result{
-		Log:    msg.String(),
 		Events: ctx.EventManager().Events(),
 	}, nil
 }

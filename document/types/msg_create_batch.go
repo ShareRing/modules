@@ -7,10 +7,10 @@ import (
 )
 
 type MsgCreateDocBatch struct {
-	Issuer sdk.AccAddress
-	Holder []string
-	Proof  []string
-	Data   []string
+	Data   []string       `json:"data"`
+	Issuer sdk.AccAddress `json:"issuer"`
+	Holder []string       `json:"holder"`
+	Proof  []string       `json:"proof"`
 }
 
 func NewMsgCreateDocBatch(issuer sdk.AccAddress, holderId, proof, data []string) MsgCreateDocBatch {
