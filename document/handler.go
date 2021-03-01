@@ -109,6 +109,10 @@ func handleMsgUpdateDoc(ctx sdk.Context, k Keeper, msg types.MsgUpdateDoc) (*sdk
 		return nil, types.ErrDocNotExisted
 	}
 
+	if existingDoc.Holder != msg.Holder || !existingDoc.Issuer.Equals(queryDoc.Issuer) {
+		return nil, types.ErrDocNotExisted
+	}
+
 	existingDoc.Data = msg.Data
 	existingDoc.Version = existingDoc.Version + 1
 
