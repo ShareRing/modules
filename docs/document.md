@@ -11,7 +11,7 @@
 
 ## New doc batch
 ```
-./slcli tx doc create-batch <holder id 1,holder id2> <doc proof 1,doc proof 2> <data1,data2> --from issuer --fees=1shr --yes --broadcast-mode=block
+./slcli tx doc create-batch <holder id 1,holder id 2> <doc proof 1,doc proof 2> <data1,data2> --from issuer --fees=1shr --yes --broadcast-mode=block
 ```
 
 ```
