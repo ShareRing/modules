@@ -8,8 +8,8 @@ import (
 )
 
 type MsgUpdateId struct {
-	Id         string         `json:"id"`
 	ExtraData  string         `json:"extra_data"`
+	Id         string         `json:"id"`
 	IssuerAddr sdk.AccAddress `json:"issuer_address"`
 }
 

@@ -8,11 +8,11 @@ import (
 )
 
 type MsgCreateIdBatch struct {
-	IssuerAddr sdk.AccAddress   `json:"issuer_address"`
-	Id         []string         `json:"id"`
 	BackupAddr []sdk.AccAddress `json:"backup_address"`
-	OwnerAddr  []sdk.AccAddress `json:"owner_address"`
 	ExtraData  []string         `json:"extra_data"`
+	Id         []string         `json:"id"`
+	IssuerAddr sdk.AccAddress   `json:"issuer_address"`
+	OwnerAddr  []sdk.AccAddress `json:"owner_address"`
 }
 
 func NewMsgCreateIdBatch(issuerAddr sdk.AccAddress, backupAddr, ownerAddr []sdk.AccAddress, id, extraData []string) MsgCreateIdBatch {

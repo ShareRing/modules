@@ -32,7 +32,7 @@ func (k Keeper) GetIdByAddress(ctx sdk.Context, ownerAddr sdk.AccAddress) *types
 		return nil
 	}
 
-	ids := k.GetBaseID(ctx, id)
+	ids := k.GetBaseID(ctx, append(types.IdStatePrefix, id...))
 	rs := types.NewIDFromBaseID(string(id), ids)
 	return &rs
 }
@@ -108,4 +108,3 @@ func (k Keeper) IterateID(ctx sdk.Context, cb func(id types.ID) (stop bool)) {
 		}
 	}
 }
-
