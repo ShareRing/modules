@@ -10,7 +10,7 @@ import (
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 
-	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
+	"github.com/ShareRing/modules/id/types"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"

@@ -1,8 +1,8 @@
 package id
 
 import (
-	"bitbucket.org/shareringvietnam/shareledger-modules/id/keeper"
-	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
+	"github.com/ShareRing/modules/id/keeper"
+	"github.com/ShareRing/modules/id/types"
 )
 
 type (

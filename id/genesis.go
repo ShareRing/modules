@@ -3,7 +3,7 @@ package id
 import (
 	"encoding/json"
 
-	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
+	"github.com/ShareRing/modules/id/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

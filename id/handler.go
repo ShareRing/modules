@@ -3,8 +3,8 @@ package id
 import (
 	"fmt"
 
-	k "bitbucket.org/shareringvietnam/shareledger-modules/id/keeper"
-	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
+	k "github.com/ShareRing/modules/id/keeper"
+	"github.com/ShareRing/modules/id/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )

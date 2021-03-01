@@ -3,8 +3,8 @@ package id
 import (
 	"testing"
 
-	keep "bitbucket.org/shareringvietnam/shareledger-modules/id/keeper"
-	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
+	keep "github.com/ShareRing/modules/id/keeper"
+	"github.com/ShareRing/modules/id/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 

@@ -6,10 +6,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/client/cli"
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/client/rest"
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/keeper"
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/types"
+	"github.com/ShareRing/modules/document/client/cli"
+	"github.com/ShareRing/modules/document/client/rest"
+	"github.com/ShareRing/modules/document/keeper"
+	"github.com/ShareRing/modules/document/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
 

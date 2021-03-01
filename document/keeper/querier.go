@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/types"
+	"github.com/ShareRing/modules/document/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 

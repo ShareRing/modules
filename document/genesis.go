@@ -1,7 +1,7 @@
 package document
 
 import (
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/types"
+	"github.com/ShareRing/modules/document/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

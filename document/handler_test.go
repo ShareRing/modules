@@ -3,8 +3,8 @@ package document
 import (
 	"testing"
 
-	keep "bitbucket.org/shareringvietnam/shareledger-modules/document/keeper"
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/types"
+	keep "github.com/ShareRing/modules/document/keeper"
+	"github.com/ShareRing/modules/document/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )

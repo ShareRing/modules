@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	i "bitbucket.org/shareringvietnam/shareledger-modules/id/interfaces"
-	"bitbucket.org/shareringvietnam/shareledger-modules/id/types"
+	i "github.com/ShareRing/modules/id/interfaces"
+	"github.com/ShareRing/modules/id/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"

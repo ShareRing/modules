@@ -3,7 +3,7 @@ package document
 import (
 	"fmt"
 
-	types "bitbucket.org/shareringvietnam/shareledger-modules/document/types"
+	types "github.com/ShareRing/modules/document/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )

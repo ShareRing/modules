@@ -1,8 +1,8 @@
 package document
 
 import (
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/keeper"
-	"bitbucket.org/shareringvietnam/shareledger-modules/document/types"
+	"github.com/ShareRing/modules/document/keeper"
+	"github.com/ShareRing/modules/document/types"
 )
 
 type (
