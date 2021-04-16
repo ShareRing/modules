@@ -1,18 +1,16 @@
 package cli
 
 import (
-	"bufio"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 
 	"github.com/ShareRing/modules/id/types"
+	myutils "github.com/ShareRing/modules/utils"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
@@ -47,10 +45,10 @@ $ create uid-159654 shareledger1s432u6zv95wpluxhf4qru2ewy58kc3w4tkzm3v shareledg
 		`,
 		Args: cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, myutils.MEDIUMFEE)
+			if err != nil {
+				return err
+			}
 
 			id := args[0]
 
@@ -66,10 +64,9 @@ $ create uid-159654 shareledger1s432u6zv95wpluxhf4qru2ewy58kc3w4tkzm3v shareledg
 
 			extraData := args[3]
 
-			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgCreateId(cliCtx.GetFromAddress(), backupAddr, ownerAddr, id, extraData)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 
@@ -88,16 +85,17 @@ $ create-batch id id1,id2 shareledger1yyc7hnyjqwlxqy9rt8scwuttwa3nt4yn2wl0z0,sha
 		`,
 		Args: cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
 			seperator := ","
 			ids := strings.Split(args[0], seperator)
 			backups := strings.Split(args[1], seperator)
 			owners := strings.Split(args[2], seperator)
 			extras := strings.Split(args[3], seperator)
+			fee := myutils.MEDIUMFEE.Mul(sdk.NewInt(int64(len(ids))))
+
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, fee)
+			if err != nil {
+				return err
+			}
 
 			backupAddrs := make([]sdk.AccAddress, 0, len(ids))
 			ownerAddrs := make([]sdk.AccAddress, 0, len(ids))
@@ -117,10 +115,12 @@ $ create-batch id id1,id2 shareledger1yyc7hnyjqwlxqy9rt8scwuttwa3nt4yn2wl0z0,sha
 				ownerAddrs = append(ownerAddrs, ownerAddr)
 			}
 
-			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgCreateIdBatch(cliCtx.GetFromAddress(), backupAddrs, ownerAddrs, ids, extras)
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			err = msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 
@@ -136,10 +136,10 @@ func UpdateIdTxCmd(cdc *codec.Codec) *cobra.Command {
 		Short: `Update Id`,
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, myutils.HIGHFEE)
+			if err != nil {
+				return err
+			}
 
 			id := args[0]
 
@@ -148,7 +148,7 @@ func UpdateIdTxCmd(cdc *codec.Codec) *cobra.Command {
 			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgUpdateId(cliCtx.GetFromAddress(), id, extraData)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 
@@ -164,10 +164,10 @@ func UpdateReplaceIdownerTxCmd(cdc *codec.Codec) *cobra.Command {
 		Short: `Replace owner of an Id`,
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, myutils.HIGHFEE)
+			if err != nil {
+				return err
+			}
 
 			id := args[0]
 
@@ -176,10 +176,9 @@ func UpdateReplaceIdownerTxCmd(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgReplaceIdOwner(id, newOwner, cliCtx.GetFromAddress())
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 

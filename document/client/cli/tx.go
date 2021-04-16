@@ -1,18 +1,16 @@
 package cli
 
 import (
-	"bufio"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 
 	"github.com/ShareRing/modules/document/types"
+	myutils "github.com/ShareRing/modules/utils"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
@@ -47,10 +45,10 @@ $ create uid-159654 c89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b
 		`,
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, myutils.HIGHFEE)
+			if err != nil {
+				return err
+			}
 
 			issuer := cliCtx.GetFromAddress()
 			holderId := args[0]
@@ -60,7 +58,7 @@ $ create uid-159654 c89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b
 			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgCreateDoc(issuer, holderId, proof, data)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 
@@ -79,22 +77,29 @@ $ create uid-159654 c89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b
 		`,
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
-
-			issuer := cliCtx.GetFromAddress()
-
 			sep := ","
 			holderId := strings.Split(args[0], sep)
 			proof := strings.Split(args[1], sep)
 			data := strings.Split(args[2], sep)
 
+			fee := myutils.HIGHFEE.Mul(sdk.NewInt(int64(len(holderId))))
+
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, fee)
+			if err != nil {
+				return err
+			}
+
+			issuer := cliCtx.GetFromAddress()
+
 			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgCreateDocBatch(issuer, holderId, proof, data)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			err = msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 
@@ -113,10 +118,10 @@ $ update uid-159654 c89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b
 		`,
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, myutils.MEDIUMFEE)
+			if err != nil {
+				return err
+			}
 
 			issuer := cliCtx.GetFromAddress()
 
@@ -127,7 +132,7 @@ $ update uid-159654 c89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b
 			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgUpdateDoc(issuer, holderId, proof, data)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 
@@ -146,10 +151,10 @@ $ revoke uid-159654 c89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b
 		`,
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
-
-			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
+			cliCtx, txBuilder, err := myutils.CreateTxBuilderWithShrpFee(cmd, cdc, myutils.HIGHFEE)
+			if err != nil {
+				return err
+			}
 
 			issuer := cliCtx.GetFromAddress()
 
@@ -159,7 +164,7 @@ $ revoke uid-159654 c89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b
 			// build and sign the transaction, then broadcast to Tendermint
 			msg := types.NewMsgRevokeDoc(issuer, holderId, proof)
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return utils.GenerateOrBroadcastMsgs(*cliCtx, *txBuilder, []sdk.Msg{msg})
 		},
 	}
 
