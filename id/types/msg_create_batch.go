@@ -7,6 +7,10 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+const (
+	MAX_BATCH_LENGH = 20
+)
+
 type MsgCreateIdBatch struct {
 	BackupAddr []sdk.AccAddress `json:"backup_address"`
 	ExtraData  []string         `json:"extra_data"`
@@ -44,7 +48,7 @@ func (msg MsgCreateIdBatch) ValidateBasic() error {
 	}
 
 	maxLen := len(msg.Id)
-	if len(msg.BackupAddr) != maxLen || len(msg.OwnerAddr) != maxLen || len(msg.ExtraData) != maxLen {
+	if maxLen > MAX_BATCH_LENGH || len(msg.BackupAddr) != maxLen || len(msg.OwnerAddr) != maxLen || len(msg.ExtraData) != maxLen {
 		return InvalidData
 	}
 

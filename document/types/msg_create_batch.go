@@ -4,6 +4,12 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
+const (
+	MAX_DOC_DATA_LEN = 64
+	MAX_BATCH_LENGH  = 20
 )
 
 type MsgCreateDocBatch struct {
@@ -26,7 +32,33 @@ func (msg MsgCreateDocBatch) Type() string {
 }
 
 func (msg MsgCreateDocBatch) ValidateBasic() error {
+	if msg.Issuer.Empty() {
+		return sdkerrors.ErrInvalidAddress
+	}
 
+	// Check len
+	if len(msg.Holder) == 0 || len(msg.Proof) == 0 || len(msg.Data) == 0 {
+		return ErrDocInvalidData
+	}
+
+	maxLen := len(msg.Holder)
+	if maxLen > MAX_BATCH_LENGH || len(msg.Proof) != maxLen || len(msg.Data) != maxLen {
+		return ErrDocInvalidData
+	}
+
+	for i := 0; i < maxLen; i++ {
+		// Check len
+		if len(msg.Holder[i]) > MAX_DOC_DATA_LEN || len(msg.Holder[i]) == 0 || len(msg.Data[i]) > MAX_DOC_DATA_LEN {
+			return ErrDocInvalidData
+		}
+
+		// Check duplicate
+		for j := i + 1; j < maxLen; j++ {
+			if msg.Holder[j] == msg.Holder[i] || msg.Proof[j] == msg.Proof[i] {
+				return ErrDocInvalidData
+			}
+		}
+	}
 	return nil
 }
 
