@@ -194,6 +194,12 @@ func CreateTxBuilderWithShrpFee(cmd *cobra.Command, cdc *codec.Codec, shrpFee sd
 	}
 	txBldrFee := txBldr.WithFees(fee)
 
+	customFee, err := cmd.Flags().GetString("fees")
+
+	if err == nil && len(customFee) > 0 {
+		txBldrFee = txBldrFee.WithFees(customFee)
+	}
+
 	return cliCtx, &txBldrFee, nil
 }
 
